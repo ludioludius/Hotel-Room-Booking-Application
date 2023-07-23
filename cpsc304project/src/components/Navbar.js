@@ -1,9 +1,11 @@
 
 export default function Navbar(){
     return <nav className="nav">
-        <a href="/" className="site-title">NOTBNB</a>
-        <ul>
-            <li className="active">
+        <ul className="nav-options">
+            <li>
+                <a href="/" className="site-title">NOTBNB</a>
+            </li>
+            <li>
                 <a href="/services">SERVICES</a>
             </li>
             <li>

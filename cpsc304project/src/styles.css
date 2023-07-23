@@ -27,6 +27,20 @@ body {
     
 }
 
+ul.nav-options {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+}
+
+ul.nav-options li:first-child {
+    margin-right: auto;
+}
+
+ul.nav-options li {
+    margin-left: 10px; /* Adjust this value as needed for spacing between the elements */
+}
+
 .site-title {
     color: #252947;
     font-family: Outfit;
