@@ -64,10 +64,12 @@ ul.nav-options {
     line-height: normal;
     margin-left: 80px;
     margin-top: 80px;
-    margin-right: 564px;
+    /* margin-right: 564px; */
 }
 
 .nav h1:hover {
     text-decoration-line: underline;
 }
-
+.header-text {
+    max-width: 800px;
+}

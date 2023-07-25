@@ -17,6 +17,8 @@ export default function Navbar(){
                 </ul>
             </div>
         </div>
-        <h1>Plan your next vacation.</h1>
+        <div className="header-text">
+            <h1>Plan your next vacation.</h1>
+        </div>
     </nav>
 }
