@@ -1,0 +1,19 @@
+.login-container{
+    margin-top: 0px;
+    display: flex;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.heading {
+    margin-top: 344px;
+    margin-left: 508px;
+    margin-right: 508px;
+    
+}
+
+.navbar{
+    margin-top: 0;
+    height: 100px;
+}
