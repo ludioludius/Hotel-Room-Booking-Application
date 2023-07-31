@@ -43,7 +43,7 @@ body {
     padding: .25rem;
 }
 
-ul.nav-options {
+.nav-options {
     padding: 0;
     margin: 0 auto;
     list-style: none;
@@ -59,10 +59,30 @@ ul.nav-options {
     background-color: #FFF4DB;
 }
 
-.nav-home li:hover {
+/* .nav-home li:hover {
     background-color: #FFF4DB;
     height: 47px;
     border-radius: 20px;
+} */
+.nav-options a{
+    position: relative;
+}
+.nav-options a::before{
+    content: "";
+    position: absolute;
+    transition: .3s; 
+    top: 100%;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: black;
+    transition: 0.3s;
+
+}
+
+.nav-options a:hover::before{
+    width: 100%
+
 }
 
 .nav-home h1 {
@@ -71,12 +91,26 @@ ul.nav-options {
     line-height: normal;
     margin-left: 80px;
     margin-top: 80px;
+    transition: 0.3s;
     /* margin-right: 564px; */
+
+}
+/* .header-text h1:hover::before{
+    transition: 1s;
+    text-decoration-color: transparent;
+    text-decoration: underline;
+} */
+
+.header-text h1:hover{
+    text-decoration: underline solid #252947;
+    transition: 0.3s;
+    text-decoration-color: #252947;
+    width: 100%;
 }
 
-.nav-home h1:hover {
-    text-decoration-line: underline;
-}
-.header-text {
+.header-text h1{
     max-width: 800px;
+    position: relative;
+    text-decoration: underline solid transparent;
+
 }
