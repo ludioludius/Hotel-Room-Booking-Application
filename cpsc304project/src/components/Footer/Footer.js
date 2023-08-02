@@ -1,8 +1,8 @@
-import './Navbar.css'
+import './Footer.css'
 
-export default function Navbar(){
-    return <nav className="nav">
-        <div className="container">
+export default function Footer(){
+    return <nav className="footer">
+        <div className="footer-container">
             <div>
                 <a href="/" className="site-title">NOTBNB</a>
             </div>
@@ -10,9 +10,6 @@ export default function Navbar(){
                 <ul className="nav-options">
                     <li>
                         <a href="/services">SERVICES</a>
-                    </li>
-                    <li>
-                        <a href="/login">LOGIN / SIGN UP</a>
                     </li>
                 </ul>
             </div>

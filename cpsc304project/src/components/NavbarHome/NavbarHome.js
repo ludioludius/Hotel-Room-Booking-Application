@@ -1,7 +1,7 @@
-import './Navbar.css'
+import './NavbarHome.css'
 
-export default function Navbar(){
-    return <nav className="nav">
+export default function NavbarHome(){
+    return <nav className="nav-home">
         <div className="container">
             <div>
                 <a href="/" className="site-title">NOTBNB</a>
@@ -16,6 +16,9 @@ export default function Navbar(){
                     </li>
                 </ul>
             </div>
+        </div>
+        <div className="header-text">
+            <h1>Plan your next vacation.</h1>
         </div>
     </nav>
 }
