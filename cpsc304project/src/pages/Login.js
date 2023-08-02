@@ -23,8 +23,8 @@ export default function Login(){
             </div>
             
             <div className='register-texts'>
-                <h1>Don't have an account?</h1>
-                <a href="signup">Register Now.</a>
+                <h2 className=''>Don't have an account?</h2>
+                <a className="register-link" href="signup">Register Now.</a>
             </div>
         </>
 }

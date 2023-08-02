@@ -72,7 +72,7 @@ input {
     padding: 0 2px; 
 }
 
-h1{
+h2{
     color: #000;
     text-align: center;
     font-family: Outfit;
@@ -80,9 +80,9 @@ h1{
     font-style: normal;
     font-weight: 400;
     line-height: normal;
-}
+} 
 
-a{
+.register-link {
     color: #000;
     text-align: center;
     font-family: Outfit;
@@ -92,6 +92,6 @@ a{
     line-height: normal;
     text-decoration: none; 
 }
-a:hover {
-    text-decoration: underline;
-}
+.register-link:hover {
+    text-decoration: underline; 
+} 
