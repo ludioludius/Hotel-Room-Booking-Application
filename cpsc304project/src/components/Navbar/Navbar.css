@@ -29,9 +29,3 @@
 .nav li.active {
     background-color: #FFF4DB;
 }
-
-.nav li:hover {
-    background-color: #FFF4DB;
-    height: 47px;
-    border-radius: 20px;
-}
