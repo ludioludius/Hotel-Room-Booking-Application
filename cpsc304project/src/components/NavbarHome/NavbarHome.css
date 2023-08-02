@@ -59,11 +59,6 @@ body {
     background-color: #FFF4DB;
 }
 
-/* .nav-home li:hover {
-    background-color: #FFF4DB;
-    height: 47px;
-    border-radius: 20px;
-} */
 .nav-options a{
     position: relative;
 }
@@ -92,14 +87,8 @@ body {
     margin-left: 80px;
     margin-top: 80px;
     transition: 0.3s;
-    /* margin-right: 564px; */
 
 }
-/* .header-text h1:hover::before{
-    transition: 1s;
-    text-decoration-color: transparent;
-    text-decoration: underline;
-} */
 
 .header-text h1:hover{
     text-decoration: underline solid #252947;
