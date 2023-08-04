@@ -21,7 +21,7 @@ const db = mysql.createConnection({
 //get all listings
 app.get('/api/listings', (req, res) => {
   //temporary query until sql file to insert data into the DB is created
-  db.query('SELECT * from authors', (err, results, fields) => {
+  db.query('SELECT * from PrivateListing', (err, results, fields) => {
     if (err) {
       return res.send(err)
     }
