@@ -18,10 +18,13 @@ const db = mysql.createConnection({
 })
 
 
-//get all listings
-app.get('/api/listings', (req, res) => {
-  //temporary query until sql file to insert data into the DB is created
-  db.query('SELECT * from PrivateListing', (err, results, fields) => {
+
+app.get('/api/PrivateListing', (req, res) => {
+  let query = 'SELECT Cost, Description, NumPeople, NumBeds, Name \
+               FROM PrivateListing pl, RentableUnit ru, PrivateLister l \
+               WHERE pl.RentableUnit_ID = ru.RentableUnit_ID AND ru.PrivateOrganization_ID = l.ID'
+  console.log(query)
+  db.query(query, (err, results, fields) => {
     if (err) {
       return res.send(err)
     }
@@ -29,6 +32,27 @@ app.get('/api/listings', (req, res) => {
     return res.json(results)
   })
 })
+
+
+app.get('/api/HotelListing', (req, res) => {
+
+  let query = 'SELECT Cost, Description, NumPeople, NumBeds, Name, NumRooms \
+               FROM HotelListing hl, BookableUnit bu, Property p \
+               WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID'
+  console.log(query)
+
+  db.query(query, (err, results, fields) => {
+    if (err) {
+      return res.send(err)
+    }
+    console.log(fields)
+    return res.json(results)
+  })
+})
+
+
+
+// (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
 
 
 
