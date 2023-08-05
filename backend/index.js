@@ -2,8 +2,10 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 require('./.env')
+const dotenv = require('dotenv');
+dotenv.config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 const app = express();
 
 //middleware
@@ -11,13 +13,28 @@ app.use(cors());
 
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_NAME,
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASS,
+    database: process.env.DBNAME,  
 })
 
+// Testing
+// app.get('/api/create-table', (req, res) => {
+//   const createTableQuery = `
+//     CREATE TABLE test_table (
+//       id INT
+//     )
+//   `;
 
+//   db.query(createTableQuery, (err, results) => {
+//     if (err) {
+//       console.error('Error creating table:', err);
+//       return res.status(500).json({ error: 'Error creating table' });
+//     }
+//     return res.json({ success: true, message: 'Table created successfully' });
+//   });
+// });
 
 app.get('/api/PrivateListing', (req, res) => {
   let query = 'SELECT Cost, Description, NumPeople, NumBeds, Name \
@@ -53,10 +70,6 @@ app.get('/api/HotelListing', (req, res) => {
 
 
 // (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
-
-
-
-
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
