@@ -6,7 +6,7 @@
 HOST="..."
 USER="..."
 PASS="..."
-PORT="3001"
+PORT="..."
 DBNAME="..."
 
 2. cd backend
