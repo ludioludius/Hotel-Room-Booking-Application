@@ -1,6 +1,6 @@
 import NavbarHome from '../components/NavbarHome/NavbarHome';
 
-export default function Login(){
+export default function Home(){
     return <>
         <NavbarHome/>
         </>
