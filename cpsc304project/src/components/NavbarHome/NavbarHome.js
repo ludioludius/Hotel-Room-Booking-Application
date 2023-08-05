@@ -9,11 +9,11 @@ export default function NavbarHome(){
             <div>
                 <ul className="nav-options">
                     <li>
-                        <a href="/services">SERVICES</a>
+                        <a href="/post">POST LISTING</a>
                     </li>
-                    <li>
+                    {/* <li>
                         <a href="/login">LOGIN / SIGN UP</a>
-                    </li>
+                    </li> */}
                 </ul>
             </div>
         </div>
