@@ -31,7 +31,7 @@ export default function Login(){
             
             <div className='register-texts'>
                 <h2 className=''>Don't have an account?</h2>
-                <a className="register-link" href="signup">Register Now.</a>
+                <a className="register-link" href="register">Register Now.</a>
             </div>
         </>
 }
