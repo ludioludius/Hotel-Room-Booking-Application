@@ -22,7 +22,7 @@ const db = mysql.createConnection({
 // Testing
 // app.get('/api/create-table', (req, res) => {
 //   const createTableQuery = `
-//     CREATE TABLE test_table (
+//     CREATE TABLE test_table_new_user (
 //       id INT
 //     )
 //   `;
