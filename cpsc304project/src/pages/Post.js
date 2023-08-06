@@ -13,9 +13,20 @@ export default function Post(){
       const button = event.target.textContent.split(" ").join("");
       setSelectedButton(button);
       console.log(button)
+
+      if (showDropdown) {
+        setShowDropdown(false);
+      }
     };
 
     const [ID, setPosterID] = useState('')
+
+    const handleIDChange = (event) => {
+        setPosterID(event.target.value);
+        if (setShowDropdown) {
+            setShowDropdown(false);
+        }
+      };
 
     const handleSubmit = (e) => {
         e.preventDefault()
@@ -52,7 +63,7 @@ export default function Post(){
             <form onSubmit={handleSubmit}>
                 <div className='id-input'>
                     <input type="id" placeholder='ID' className='form-control'
-                    onChange={e => setPosterID(e.target.value)}/>
+                    onChange={handleIDChange}/>
                 </div>
                 <button type="submit" className='create-post'>CREATE A LISTING</button>
             </form>
@@ -62,9 +73,14 @@ export default function Post(){
                 <h1>Please submit a valid ID.</h1>
 
             )}
-            {showDropdown && (
+            {showDropdown && selectedButton === "PrivateLister" && (
                 <div className="dropdown-section">
-                    <h1>query executed</h1>
+                    <h1>query executed for private lister</h1>
+                </div>
+            )}
+            {showDropdown && selectedButton === "HotelAffiliate" && (
+                <div className="dropdown-section">
+                    <h1>query executed for hotel property lister</h1>
                 </div>
             )}
         </div>
