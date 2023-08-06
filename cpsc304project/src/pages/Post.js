@@ -17,6 +17,14 @@ export default function Post(){
       if (showDropdown) {
         setShowDropdown(false);
       }
+
+      SetInvalidUnitID(false);
+      SetMissingFields(false);
+
+      SetUnitID(null);
+      setDesc(null);
+      setCost(null);
+      setRoomNum(null);
     };
 
     const [ID, setPosterID] = useState('')
@@ -45,13 +53,14 @@ export default function Post(){
           });
     }
 
-    const [RentUnitID, SetRentUnitID] = useState(null)
+    const [UnitID, SetUnitID] = useState(null)
     const [Desc, setDesc] = useState(null)
     const [Cost, setCost] = useState(null)
+    const [RoomNum, setRoomNum] = useState(null)
 
-    const handleRentUnitIDChange = (e) => {
-        SetRentUnitID(e.target.value);
-        SetInvalidRentID(false)
+    const handleUnitIDChange = (e) => {
+        SetUnitID(e.target.value);
+        SetInvalidUnitID(false)
     }
 
     const handleDescChange = (e) => {
@@ -62,21 +71,26 @@ export default function Post(){
         setCost(e.target.value);
     }
 
-    const [InvalidRentID, SetInvalidRentID] = useState(false)
+    const handleRoomNumChange = (e) => {
+        setRoomNum(e.target.value);
+        SetInvalidUnitID(false)
+    }
+
+    const [InvalidUnitID, SetInvalidUnitID] = useState(false)
     const [MissingFields, SetMissingFields] = useState(false)
 
     const handlePostListing = (e) => {
         e.preventDefault()
-        if (!RentUnitID || !Desc || !Cost) {
+        if (!UnitID || !Desc || !Cost) {
             SetMissingFields(true)
         }
-        if (RentUnitID && Desc && Cost) {
+        if (UnitID && Desc && Cost) {
             SetMissingFields(false)
         }
 
         if (!MissingFields) {
             axios.post(`http://localhost:3001/post-private-listing`, {
-                RentUnitID: RentUnitID,
+                RentUnitID: UnitID,
                 Desc: Desc,
                 Cost: Cost,
             })
@@ -87,7 +101,36 @@ export default function Post(){
                 console.error('Error checking ID:', error);
                 if (error.response && error.response.status === 404) {
                     console.error('Error checking ID:', error);
-                    SetInvalidRentID(true);
+                    SetInvalidUnitID(true);
+                }
+            });
+        }
+    }
+
+    const handlePostHotelListing = (e) => {
+        e.preventDefault()
+        if (!UnitID || !Desc || !Cost || !RoomNum) {
+            SetMissingFields(true)
+        }
+        if (UnitID && Desc && Cost && RoomNum) {
+            SetMissingFields(false)
+        }
+
+        if (!MissingFields) {
+            axios.post(`http://localhost:3001/post-hotel-listing`, {
+                PropertyID: UnitID,
+                Desc: Desc,
+                Cost: Cost,
+                RoomNum: RoomNum,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.error('Error checking ID:', error);
+                if (error.response && error.response.status === 404) {
+                    console.error('Error checking ID:', error);
+                    SetInvalidUnitID(true);
                 }
             });
         }
@@ -129,8 +172,8 @@ export default function Post(){
                             <h1>Enter the details of your listing.</h1>
                             <div className="listing-details">
                                 
-                                <input type="tel" placeholder='Rentable unit ID' onChange={handleRentUnitIDChange} className={InvalidRentID ? 'invalid-input' : ''}/>
-                                {InvalidRentID && <div className="warning-message">Rentable Unit ID does not exist.</div>}
+                                <input type="tel" placeholder='Rentable unit ID' onChange={handleUnitIDChange} className={InvalidUnitID ? 'invalid-input' : ''}/>
+                                {InvalidUnitID && <div className="warning-message">Rentable Unit ID does not exist.</div>}
                                 <input type="tel" placeholder='Description' className='description-input' onChange={handleDescChange}/>
                                 <input type="tel" placeholder='Cost / night' onChange={handleCostChange} />
                                 
@@ -145,11 +188,23 @@ export default function Post(){
             )}
             {showDropdown && selectedButton === "HotelAffiliate" && (
                 <div className="dropdown-section">
-                    {/* <h1>query executed for hotel property lister</h1> */}
-                    <form>
-                        
-                    </form>
-                </div>
+                <form onSubmit={handlePostHotelListing}>
+                    <div>
+                        <h1>Enter the details of your listing.</h1>
+                        <div className="listing-details">
+                            
+                            <input type="tel" placeholder='Property ID' onChange={handleUnitIDChange} className={InvalidUnitID ? 'invalid-input' : ''}/>
+                            {InvalidUnitID && <div className="warning-message">Property ID or Room Number does not exist.</div>}
+                            <input type="tel" placeholder='Description' className='description-input' onChange={handleDescChange}/>
+                            <input type="tel" placeholder='Cost / night' onChange={handleCostChange} />
+                            <input type="tel" placeholder='Room Number' onChange={handleRoomNumChange} />
+                            
+                        </div>
+                        <button type="submit" className="post-listing">POST LISTING</button>            
+                        {MissingFields && <div className="warning-message">Missing fields.</div>}
+                    </div>
+                </form>
+            </div>
             )}
         </div>
            

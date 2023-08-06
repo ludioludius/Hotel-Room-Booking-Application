@@ -129,7 +129,6 @@ app.post('/post-private-listing', (req, res) => {
     }
 
     if (result.length === 0) {
-      console.log("no rentid found")
       return res.status(404).json({ error: `The RentableUnit with ID ${RentUnitID} does not exist` });
     }
 
@@ -157,8 +156,62 @@ app.post('/post-private-listing', (req, res) => {
   
   });
 
-  
+}
+)
 
+app.post('/post-hotel-listing', (req, res) => {
+  const PropertyID = req.body.PropertyID;
+  const Desc = req.body.Desc.replaceAll(",", ";");
+  const Cost = req.body.Cost;
+  const RoomNum = req.body.RoomNum;
+  
+  const checkPropertyQuery = `SELECT Property_ID FROM Property WHERE Property_ID = ${PropertyID}`;
+  db.query(checkPropertyQuery, (err, result) => {
+    if (err) {
+      console.error('Error checking PropertyID:', err);
+      return res.status(500).json({ error: `The Property with ID ${PropertyID} does not exist` });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: `The Property with ID ${PropertyID} does not exist` });
+    }
+
+    const checkPropertyQuery = `SELECT RoomNum FROM BookableUnit WHERE RoomNum = ${RoomNum} 
+                                AND Property_ID = ${PropertyID}`;
+    db.query(checkPropertyQuery, (err, result) => {
+      if (err) {
+        console.error('Error checking RoomNum:', err);
+        return res.status(500).json({ error: `The BookableUnit with Room Number ${RoomNum} is not available` });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: `The BookableUnit with Room Number ${RoomNum} is not available` });
+      }
+
+      const queryNextID = "SELECT MAX(HotelListing_ID) + 1 AS next_id FROM HotelListing"
+
+      db.query(queryNextID, (err, result) => {
+        if (err) {
+          console.error('Error fetching next available ID:', err);
+          return res.status(500).json({ error: 'Failed to get next ID' });
+        }
+        const nextID = result[0].next_id || 1;
+        
+        const query = `INSERT INTO HotelListing (HotelListing_ID, Cost, Description, Property_ID, RoomNumber) VALUES (${nextID}, ${Cost}, '${Desc}', ${PropertyID}, ${RoomNum})`
+          
+        db.query(query, (err, result) => {
+          if (err) {
+            console.error('Error inserting row:', err);
+            return res.status(500).json({ error: 'Failed to insert row' });
+          }
+          return res.status(200).json({ message: 'Row inserted successfully!' });
+
+        });
+      });
+
+    });
+  
+  });
 
 }
 )
