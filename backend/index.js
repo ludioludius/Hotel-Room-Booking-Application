@@ -4,13 +4,17 @@ const cors = require('cors');
 require('./.env')
 const dotenv = require('dotenv');
 dotenv.config();
+const fs = require('fs');
+// const { Query } = require('mysql2/typings/mysql/lib/protocol/sequences/Query');
 
 const PORT = process.env.PORT;
 const app = express();
 
 //middleware
 app.use(cors());
+app.use(express.json())
 
+const sqlFilePath = '../project_data_304.sql';
 
 const db = mysql.createConnection({
     host: process.env.HOST,
@@ -19,20 +23,31 @@ const db = mysql.createConnection({
     database: process.env.DBNAME,  
 })
 
-// Testing
-// app.get('/api/create-table', (req, res) => {
-//   const createTableQuery = `
-//     CREATE TABLE test_table_new_user (
-//       id INT
-//     )
-//   `;
+// fs.readFile(sqlFilePath, 'utf8', (err, data) => {
+//   if (err) {
+//     console.error('Error reading SQL file:', err);
+//     return;
+//   }
 
-//   db.query(createTableQuery, (err, results) => {
+//   const queries = data.split(';');
+
+//   db.connect((err) => {
 //     if (err) {
-//       console.error('Error creating table:', err);
-//       return res.status(500).json({ error: 'Error creating table' });
+//       console.error('Error connecting to the database:', err);
+//       return;
 //     }
-//     return res.json({ success: true, message: 'Table created successfully' });
+
+//     queries.forEach((query) => {
+//       db.query(query, (err, result) => {
+//         if (err) {
+//           console.error('Error executing query:', err, query);
+//         } else {
+//           console.log('Query executed successfully:', result);
+//         }
+//       });
+//     });
+
+//     db.end();
 //   });
 // });
 
@@ -70,6 +85,136 @@ app.get('/api/HotelListing', (req, res) => {
 
 
 // (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
+
+
+
+app.post('/check-poster-id', (req, res) => {
+  const selectedButton = req.body.selectedButton;
+  const ID = req.body.ID;
+
+  let search_table = "";
+  if (selectedButton === "PrivateLister") {
+    search_table = "PrivateLister";
+  }
+  if (selectedButton === "HotelAffiliate") {
+    search_table = "HotelOrganization";
+  }
+
+  if (search_table) {
+    const query = `SELECT * FROM ${search_table} WHERE ID = ?`
+    db.query(query, [ID], (err, results) => {
+      if (err) {
+        console.error('Error checking ID:', err);
+        return res.status(500).json({ error: 'Error checking ID' });
+      }
+  
+      const isIDFound = results.length > 0;
+      return res.json({ found: isIDFound });
+    });
+  }
+  return false;
+
+});
+
+app.post('/post-private-listing', (req, res) => {
+  const RentUnitID = req.body.RentUnitID;
+  const Desc = req.body.Desc.replaceAll(",", ";");
+  const Cost = req.body.Cost;
+  
+  const checkRentableUnitQuery = `SELECT RentableUnit_ID FROM RentableUnit WHERE RentableUnit_ID = ${RentUnitID}`;
+  db.query(checkRentableUnitQuery, (err, result) => {
+    if (err) {
+      console.error('Error checking RentableUnitID:', err);
+      return res.status(500).json({ error: `The RentableUnit with ID ${RentUnitID} does not exist` });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: `The RentableUnit with ID ${RentUnitID} does not exist` });
+    }
+
+    const queryNextID = "SELECT MAX(PrivateListing_ID) + 1 AS next_id FROM PrivateListing"
+
+    db.query(queryNextID, (err, result) => {
+      if (err) {
+        console.error('Error fetching next available ID:', err);
+        return res.status(500).json({ error: 'Failed to get next ID' });
+      }
+      const nextID = result[0].next_id || 1;
+      
+      const query = `INSERT INTO PrivateListing (PrivateListing_ID, Cost, Description, RentableUnit_ID) VALUES (${nextID}, ${Cost}, '${Desc}', ${RentUnitID})`
+        
+      db.query(query, (err, result) => {
+        if (err) {
+          console.error('Error inserting row:', err);
+          return res.status(500).json({ error: 'Failed to insert row' });
+        }
+        return res.status(200).json({ message: 'Row inserted successfully!' });
+
+      });
+
+    });
+  
+  });
+
+}
+)
+
+app.post('/post-hotel-listing', (req, res) => {
+  const PropertyID = req.body.PropertyID;
+  const Desc = req.body.Desc.replaceAll(",", ";");
+  const Cost = req.body.Cost;
+  const RoomNum = req.body.RoomNum;
+  
+  const checkPropertyQuery = `SELECT Property_ID FROM Property WHERE Property_ID = ${PropertyID}`;
+  db.query(checkPropertyQuery, (err, result) => {
+    if (err) {
+      console.error('Error checking PropertyID:', err);
+      return res.status(500).json({ error: `The Property with ID ${PropertyID} does not exist` });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: `The Property with ID ${PropertyID} does not exist` });
+    }
+
+    const checkPropertyQuery = `SELECT RoomNum FROM BookableUnit WHERE RoomNum = ${RoomNum} 
+                                AND Property_ID = ${PropertyID}`;
+    db.query(checkPropertyQuery, (err, result) => {
+      if (err) {
+        console.error('Error checking RoomNum:', err);
+        return res.status(500).json({ error: `The BookableUnit with Room Number ${RoomNum} is not available` });
+      }
+
+      if (result.length === 0) {
+        return res.status(404).json({ error: `The BookableUnit with Room Number ${RoomNum} is not available` });
+      }
+
+      const queryNextID = "SELECT MAX(HotelListing_ID) + 1 AS next_id FROM HotelListing"
+
+      db.query(queryNextID, (err, result) => {
+        if (err) {
+          console.error('Error fetching next available ID:', err);
+          return res.status(500).json({ error: 'Failed to get next ID' });
+        }
+        const nextID = result[0].next_id || 1;
+        
+        const query = `INSERT INTO HotelListing (HotelListing_ID, Cost, Description, Property_ID, RoomNumber) VALUES (${nextID}, ${Cost}, '${Desc}', ${PropertyID}, ${RoomNum})`
+          
+        db.query(query, (err, result) => {
+          if (err) {
+            console.error('Error inserting row:', err);
+            return res.status(500).json({ error: 'Failed to insert row' });
+          }
+          return res.status(200).json({ message: 'Row inserted successfully!' });
+
+        });
+      });
+
+    });
+  
+  });
+
+}
+)
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
