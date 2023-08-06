@@ -20,6 +20,7 @@ export default function Post(){
     };
 
     const [ID, setPosterID] = useState('')
+    
 
     const handleIDChange = (event) => {
         setPosterID(event.target.value);
@@ -44,6 +45,54 @@ export default function Post(){
           });
     }
 
+    const [RentUnitID, SetRentUnitID] = useState(null)
+    const [Desc, setDesc] = useState(null)
+    const [Cost, setCost] = useState(null)
+
+    const handleRentUnitIDChange = (e) => {
+        SetRentUnitID(e.target.value);
+        SetInvalidRentID(false)
+    }
+
+    const handleDescChange = (e) => {
+        setDesc(e.target.value);
+    }
+
+    const handleCostChange = (e) => {
+        setCost(e.target.value);
+    }
+
+    const [InvalidRentID, SetInvalidRentID] = useState(false)
+    const [MissingFields, SetMissingFields] = useState(false)
+
+    const handlePostListing = (e) => {
+        e.preventDefault()
+        if (!RentUnitID || !Desc || !Cost) {
+            SetMissingFields(true)
+        }
+        if (RentUnitID && Desc && Cost) {
+            SetMissingFields(false)
+        }
+
+        if (!MissingFields) {
+            axios.post(`http://localhost:3001/post-private-listing`, {
+                RentUnitID: RentUnitID,
+                Desc: Desc,
+                Cost: Cost,
+            })
+            .then((response) => {
+                console.log(response);
+            })
+            .catch((error) => {
+                console.error('Error checking ID:', error);
+                if (error.response && error.response.status === 404) {
+                    console.error('Error checking ID:', error);
+                    SetInvalidRentID(true);
+                }
+            });
+        }
+    }
+
     return <>
         <div className='navbar'><Navbar/></div>
 
@@ -65,7 +114,7 @@ export default function Post(){
                     <input type="id" placeholder='ID' className='form-control'
                     onChange={handleIDChange}/>
                 </div>
-                <button type="submit" className='create-post'>CREATE A LISTING</button>
+                <button type="submit" className='create-post'>AUTHENTICATE</button>
             </form>
         </div>
         <div className="dropdown-main">
@@ -75,12 +124,31 @@ export default function Post(){
             )}
             {showDropdown && selectedButton === "PrivateLister" && (
                 <div className="dropdown-section">
-                    <h1>query executed for private lister</h1>
+                    <form onSubmit={handlePostListing}>
+                        <div>
+                            <h1>Enter the details of your listing.</h1>
+                            <div className="listing-details">
+                                
+                                <input type="tel" placeholder='Rentable unit ID' onChange={handleRentUnitIDChange} className={InvalidRentID ? 'invalid-input' : ''}/>
+                                {InvalidRentID && <div className="warning-message">Rentable Unit ID does not exist.</div>}
+                                <input type="tel" placeholder='Description' className='description-input' onChange={handleDescChange}/>
+                                <input type="tel" placeholder='Cost / night' onChange={handleCostChange} />
+                                
+                            </div>
+                            <button type="submit" className="post-listing">POST LISTING</button>            
+                            {MissingFields && <div className="warning-message">Missing fields.</div>}
+                        </div>
+{/*                   
+                        <div className='file-upload'> file upload</div> */}
+                    </form>
                 </div>
             )}
             {showDropdown && selectedButton === "HotelAffiliate" && (
                 <div className="dropdown-section">
-                    <h1>query executed for hotel property lister</h1>
+                    {/* <h1>query executed for hotel property lister</h1> */}
+                    <form>
+                        
+                    </form>
                 </div>
             )}
         </div>

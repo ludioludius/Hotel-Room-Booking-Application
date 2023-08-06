@@ -116,6 +116,52 @@ app.post('/check-poster-id', (req, res) => {
 
 });
 
+app.post('/post-private-listing', (req, res) => {
+  const RentUnitID = req.body.RentUnitID;
+  const Desc = req.body.Desc.replaceAll(",", ";");
+  const Cost = req.body.Cost;
+  
+  const checkRentableUnitQuery = `SELECT RentableUnit_ID FROM RentableUnit WHERE RentableUnit_ID = ${RentUnitID}`;
+  db.query(checkRentableUnitQuery, (err, result) => {
+    if (err) {
+      console.error('Error checking RentableUnitID:', err);
+      return res.status(500).json({ error: `The RentableUnit with ID ${RentUnitID} does not exist` });
+    }
+
+    if (result.length === 0) {
+      console.log("no rentid found")
+      return res.status(404).json({ error: `The RentableUnit with ID ${RentUnitID} does not exist` });
+    }
+
+    const queryNextID = "SELECT MAX(PrivateListing_ID) + 1 AS next_id FROM PrivateListing"
+
+    db.query(queryNextID, (err, result) => {
+      if (err) {
+        console.error('Error fetching next available ID:', err);
+        return res.status(500).json({ error: 'Failed to get next ID' });
+      }
+      const nextID = result[0].next_id || 1;
+      
+      const query = `INSERT INTO PrivateListing (PrivateListing_ID, Cost, Description, RentableUnit_ID) VALUES (${nextID}, ${Cost}, '${Desc}', ${RentUnitID})`
+        
+      db.query(query, (err, result) => {
+        if (err) {
+          console.error('Error inserting row:', err);
+          return res.status(500).json({ error: 'Failed to insert row' });
+        }
+        return res.status(200).json({ message: 'Row inserted successfully!' });
+
+      });
+
+    });
+  
+  });
+
+  
+
+
+}
+)
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
