@@ -6,31 +6,32 @@ import axios from 'axios';
 
 export default function Post(){
 
-    const [selectedButton, setSelectedButton] = useState(null);
+    const [selectedButton, setSelectedButton] = useState("PrivateLister");
     const [showDropdown, setShowDropdown] = useState(false);
 
     const handleButtonClick = (event) => {
-      const button = event.target.textContent;
+      const button = event.target.textContent.split(" ").join("");
       setSelectedButton(button);
+      console.log(button)
     };
 
     const [ID, setPosterID] = useState('')
-    function handleSubmit(event) {
-        event.preventDefault();
-    }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        axios.get(`/api/check-id/${ID}`)
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        axios.post(`http://localhost:3001/check-poster-id`, {
+            selectedButton: selectedButton,
+            ID: ID,
+          })
           .then((response) => {
-            // The response data should indicate if the ID is found or not
+            console.log(response);
             const isIDFound = response.data.found;
             setShowDropdown(isIDFound);
           })
           .catch((error) => {
             console.error('Error checking ID:', error);
           });
-      }
+    }
 
     return <>
         <div className='navbar'><Navbar/></div>
@@ -38,11 +39,11 @@ export default function Post(){
         <div className="poster-auth">
             <h1>Select your account type.</h1>
             <div className='poster-options'>
-                <button className={selectedButton === 'Private Lister' ? 'button-special' : 'button-o'}
+                <button className={selectedButton === 'PrivateLister' ? 'button-special' : 'button-o'}
                 onClick={handleButtonClick}>
                     Private Lister
                 </button>
-                <button className={selectedButton === 'Hotel Affiliate' ? 'button-special' : 'button-o'}
+                <button className={selectedButton === 'HotelAffiliate' ? 'button-special' : 'button-o'}
                 onClick={handleButtonClick}>
                     Hotel Affiliate
                 </button>
@@ -53,11 +54,11 @@ export default function Post(){
                     <input type="id" placeholder='ID' className='form-control'
                     onChange={e => setPosterID(e.target.value)}/>
                 </div>
-                <button className='create-post'>CREATE A LISTING</button>
+                <button type="submit" className='create-post'>CREATE A LISTING</button>
             </form>
             {showDropdown && (
             <div className="dropdown-section">
-                {/* Dropdown content */}
+                <h1>query executed</h1>
             </div>
             )}
            </div>

@@ -4,13 +4,17 @@ const cors = require('cors');
 require('./.env')
 const dotenv = require('dotenv');
 dotenv.config();
+const fs = require('fs');
+// const { Query } = require('mysql2/typings/mysql/lib/protocol/sequences/Query');
 
 const PORT = process.env.PORT;
 const app = express();
 
 //middleware
 app.use(cors());
+app.use(express.json())
 
+const sqlFilePath = '../project_data_304.sql';
 
 const db = mysql.createConnection({
     host: process.env.HOST,
@@ -19,20 +23,31 @@ const db = mysql.createConnection({
     database: process.env.DBNAME,  
 })
 
-// Testing
-// app.get('/api/create-table', (req, res) => {
-//   const createTableQuery = `
-//     CREATE TABLE test_table_new_user (
-//       id INT
-//     )
-//   `;
+// fs.readFile(sqlFilePath, 'utf8', (err, data) => {
+//   if (err) {
+//     console.error('Error reading SQL file:', err);
+//     return;
+//   }
 
-//   db.query(createTableQuery, (err, results) => {
+//   const queries = data.split(';');
+
+//   db.connect((err) => {
 //     if (err) {
-//       console.error('Error creating table:', err);
-//       return res.status(500).json({ error: 'Error creating table' });
+//       console.error('Error connecting to the database:', err);
+//       return;
 //     }
-//     return res.json({ success: true, message: 'Table created successfully' });
+
+//     queries.forEach((query) => {
+//       db.query(query, (err, result) => {
+//         if (err) {
+//           console.error('Error executing query:', err, query);
+//         } else {
+//           console.log('Query executed successfully:', result);
+//         }
+//       });
+//     });
+
+//     db.end();
 //   });
 // });
 
@@ -70,6 +85,37 @@ app.get('/api/HotelListing', (req, res) => {
 
 
 // (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
+
+
+
+app.post('/check-poster-id', (req, res) => {
+  const selectedButton = req.body.selectedButton;
+  const ID = req.body.ID;
+
+  let search_table = "";
+  if (selectedButton === "PrivateLister") {
+    search_table = "PrivateLister";
+  }
+  if (selectedButton === "HotelAffiliate") {
+    search_table = "HotelOrganization";
+  }
+
+  if (search_table) {
+    const query = `SELECT * FROM ${search_table} WHERE ID = ?`
+    db.query(query, [ID], (err, results) => {
+      if (err) {
+        console.error('Error checking ID:', err);
+        return res.status(500).json({ error: 'Error checking ID' });
+      }
+  
+      const isIDFound = results.length > 0;
+      return res.json({ found: isIDFound });
+    });
+  }
+  return false;
+
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
