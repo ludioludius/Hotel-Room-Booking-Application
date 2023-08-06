@@ -56,11 +56,18 @@ export default function Post(){
                 </div>
                 <button type="submit" className='create-post'>CREATE A LISTING</button>
             </form>
-            {showDropdown && (
-            <div className="dropdown-section">
-                <h1>query executed</h1>
-            </div>
+        </div>
+        <div className="dropdown-main">
+            {!showDropdown && (
+                <h1>Please submit a valid ID.</h1>
+
             )}
-           </div>
+            {showDropdown && (
+                <div className="dropdown-section">
+                    <h1>query executed</h1>
+                </div>
+            )}
+        </div>
+           
     </>
 }

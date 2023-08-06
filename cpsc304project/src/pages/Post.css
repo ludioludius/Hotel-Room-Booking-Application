@@ -4,9 +4,9 @@
 }
 
 .poster-auth{
-    margin-top: 140px;
     justify-content: center;
     align-items: center;
+    height: 350px;
 }
 
 .poster-auth {
@@ -20,7 +20,7 @@
 }
 
 .poster-options {
-    margin-top: 20px;
+    /* margin-top: 20px; */
 }
 
 .poster-options button {
@@ -91,8 +91,29 @@ input {
     border: 2px solid #ae4a38;
 }
 
-.dropdown-section {
-    margin-top: 700px;
+.dropdown-main h1{
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: normal;
+    color: #ae4a38;
+}
+
+.dropdown-main {
+    display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.dropdown-section {
+    margin-top: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid black;
+    border-radius: 10px;
+    width: 50%;
+    height: 400px;
+    margin-bottom: 70px;
 }
