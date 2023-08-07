@@ -1,6 +1,6 @@
-import { UserOutlined, UnorderedListOutlined, EditOutlined } from '@ant-design/icons';
+import { UserOutlined, UnorderedListOutlined, EditOutlined } from "@ant-design/icons";
 import type { MenuProps } from 'antd';
-import {Col, Row, Menu} from 'antd';
+import {Menu} from 'antd';
 import {usePageContext} from "./usePageContext";
 
 const items: MenuProps['items'] = [
@@ -10,7 +10,7 @@ const items: MenuProps['items'] = [
 		icon: <EditOutlined />,
 	},
 	{
-		label: 'Button Two',
+		label: 'View Listings',
 		key: '/listings',
 		icon: <UnorderedListOutlined />,
 	},
@@ -31,8 +31,8 @@ export default function Navbar() {
 		window.location.href = e.key;
 	};
 
-	return <Row justify="space-between">
-		<Col><a style={{textDecoration: "none"}} href="/">asdf</a></Col>
-		<Col><Menu onClick={onClick} selectedKeys={[path]} mode="horizontal" items={items} /></Col>
-	</Row>;
+	return <div style={{display: "flex", justifyContent: "space-between"}}>
+		<a href="/">name here</a>
+		<Menu disabledOverflow={true} onClick={onClick} selectedKeys={[path]} mode="horizontal" items={items} />
+	</div>;
 }
