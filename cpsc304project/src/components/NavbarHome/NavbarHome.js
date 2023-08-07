@@ -14,6 +14,9 @@ export default function NavbarHome(){
                     {/* <li>
                         <a href="/login">LOGIN / SIGN UP</a>
                     </li> */}
+                    <li>
+                        <a href="/search">SEARCH LISTINGS</a>
+                    </li>
                 </ul>
             </div>
         </div>
