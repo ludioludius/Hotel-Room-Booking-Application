@@ -4,7 +4,6 @@ const cors = require('cors');
 require('./.env')
 const dotenv = require('dotenv');
 dotenv.config();
-const fs = require('fs');
 // const { Query } = require('mysql2/typings/mysql/lib/protocol/sequences/Query');
 
 const PORT = process.env.PORT;
@@ -89,14 +88,14 @@ app.get('/api/HotelListing', (req, res) => {
 
 
 app.post('/check-poster-id', (req, res) => {
-  const selectedButton = req.body.selectedButton;
+  const id_type = req.body.selectedButton || req.body.id_type;
   const ID = req.body.ID;
 
   let search_table = "";
-  if (selectedButton === "PrivateLister") {
+  if (id_type === "PrivateLister" || id_type === "private") {
     search_table = "PrivateLister";
   }
-  if (selectedButton === "HotelAffiliate") {
+  if (id_type === "HotelAffiliate" || id_type === "hotel") {
     search_table = "HotelOrganization";
   }
 

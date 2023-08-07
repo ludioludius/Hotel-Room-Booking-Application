@@ -1,4 +1,4 @@
-import { AppstoreOutlined, MailOutlined } from '@ant-design/icons';
+import { UserOutlined, UnorderedListOutlined, EditOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {Col, Row, Menu} from 'antd';
 import {usePageContext} from "./usePageContext";
@@ -6,19 +6,24 @@ import {usePageContext} from "./usePageContext";
 const items: MenuProps['items'] = [
 	{
 		label: 'Post Listing',
-		key: 'post',
-		icon: <MailOutlined />,
+		key: '/post',
+		icon: <EditOutlined />,
 	},
 	{
 		label: 'Button Two',
-		key: '',
-		icon: <AppstoreOutlined />,
+		key: '/listings',
+		icon: <UnorderedListOutlined />,
+	},
+	{
+		label: 'Button Three',
+		key: '/user',
+		icon: <UserOutlined />,
 	},
 ];
 
 export default function Navbar() {
 	const pageContext = usePageContext();
-	const path = pageContext.url || "";
+	const path = pageContext.urlPathname || "";
 	console.log(path);
 
 	const onClick: MenuProps['onClick'] = (e) => {
@@ -27,7 +32,7 @@ export default function Navbar() {
 	};
 
 	return <Row justify="space-between">
-		<Col span={8}><a style={{textDecoration: "none"}} href="/">asdf</a></Col>
-		<Col span={4}><Menu onClick={onClick} selectedKeys={[path]} mode="horizontal" items={items} /></Col>
+		<Col><a style={{textDecoration: "none"}} href="/">asdf</a></Col>
+		<Col><Menu onClick={onClick} selectedKeys={[path]} mode="horizontal" items={items} /></Col>
 	</Row>;
 }
