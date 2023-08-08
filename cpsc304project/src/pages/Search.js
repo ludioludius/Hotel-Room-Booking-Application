@@ -4,9 +4,10 @@ import { set } from 'react-hook-form';
 
 //server port hard coded to 3001
 
+
+
 const Search = () => {
     const [toggleView, settoggleView] = useState(true)
-
     const label = toggleView? 'View Hotels': 'View Private Listings'
 
     const onClickHandler = () => {
@@ -18,49 +19,81 @@ const Search = () => {
         }
     }
 
-    return(
-        <>
-        <button onClick={onClickHandler}>{label}</button>
-        <HotelListings render={toggleView}/>
-        <PrivateListings render={toggleView}/>
-        </>
-    )
+    if (toggleView) {
+        return (
+            <>
+            <button onClick={onClickHandler}>{label}</button>
+            <form>
+      
+            </form>
+            <PrivateListings render={toggleView}/>
+            </>
+        )
+    } else {
+        return (
+            <>
+            <button onClick={onClickHandler}>{label}</button>
+            <HotelListings/>
+            </>
+        )
+
+    }
 }
 
 export default Search
 
 
-const HotelListings = ({render}) => {
+const HotelListings = (props) => {
 
-    const [listings, setListings] = useState([])
+    const [HotelListings, setHotelListings] = useState([])
+    const [MaxCost, setMaxCost] = useState(100000)
+    const [MinPeople, setMinPeople] = useState(0)
 
     const hook = () => {
+        console.log("effect hook run", MaxCost, MinPeople)
         axios
-        .get('http://localhost:3001/api/HotelListing')
+        .get(`http://localhost:3001/api/HotelListing/${MaxCost}/${MinPeople}`)
         .then(response => {
-            setListings(listings.concat(response.data))
+            setHotelListings(response.data)
 
         })        
       }
 
-    
-    
-      useEffect(hook,[])
- 
 
-      console.log(listings)
-
-      if (render) {
-        return null
+    const handleCostChange = (event) => {
+        if (event.target.value) {
+            setMaxCost(event.target.value)
+        } else {
+            setMaxCost(10000)
+        }
     }
 
+
+    const handlePeopleChange = (event) => {
+        if (event.target.value) {
+            setMinPeople(event.target.value)
+        } else {
+            setMinPeople(0)
+        }
+    }
+
+      
+    useEffect(hook,[MaxCost, MinPeople])
+    console.log(HotelListings)
+
     return(
-        <ul> {listings.map(listing => 
-            <li> Cost: {listing.Cost} Description: {listing.Description} Hotel Name: {listing.Name} Numpeople: {listing.NumPeople} NumBeds: {listing.NumBeds} 
+        <>
+        <label htmlFor="MaxCost">Enter MaxCost: </label>
+        <input type="number" name="MaxCost" onChange={handleCostChange}/>
+        <label htmlFor="MinPeople">Enter number of peoplet: </label>
+        <input type="number" name="MinPeople" onChange={handlePeopleChange}/>   
+        <ul> {HotelListings.map(listing => 
+            <li key={listing.HotelListing_ID}> Cost: {listing.Cost} Description: {listing.Description} Hotel Name: {listing.Name} Numpeople: {listing.NumPeople} NumBeds: {listing.NumBeds} 
                 <button>Book Listing</button>
             </li>
         )} 
         </ul>
+        </>
     )
 }
 
@@ -69,11 +102,13 @@ const PrivateListings = ({render}) => {
     const [listings, setListings] = useState([])
 
 
+
     const hook = () => {
+        console.log("effect hook running when state size = ", listings.length)
         axios
         .get('http://localhost:3001/api/PrivateListing')
         .then(response => {
-            setListings(listings.concat(response.data))
+            setListings(response.data)
 
         })        
       }
@@ -85,17 +120,16 @@ const PrivateListings = ({render}) => {
 
       console.log(listings)
 
-      if (!render) {
-        return null
-    }
 
 
     return(
+        <>
         <ul> {listings.map(listing => 
-            <li> Cost: {listing.Cost} Description: {listing.Description} Hotel Name: {listing.Name} Numpeople: {listing.NumPeople} NumBeds: {listing.NumBeds} 
+            <li key={listing.PrivateListing_ID}> Cost: {listing.Cost} Description: {listing.Description} Hotel Name: {listing.Name} Numpeople: {listing.NumPeople} NumBeds: {listing.NumBeds} 
                 <button>Book Listing</button>
             </li>
         )} 
         </ul>
+        </>
     )
 }

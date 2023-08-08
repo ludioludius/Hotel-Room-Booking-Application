@@ -52,7 +52,7 @@ const db = mysql.createConnection({
 // });
 
 app.get('/api/PrivateListing', (req, res) => {
-  let query = 'SELECT Cost, Description, NumPeople, NumBeds, Name \
+  let query = 'SELECT PrivateListing_ID ,Cost, Description, NumPeople, NumBeds, Name \
                FROM PrivateListing pl, RentableUnit ru, PrivateLister l \
                WHERE pl.RentableUnit_ID = ru.RentableUnit_ID AND ru.PrivateOrganization_ID = l.ID'
   console.log(query)
@@ -66,11 +66,14 @@ app.get('/api/PrivateListing', (req, res) => {
 })
 
 
-app.get('/api/HotelListing', (req, res) => {
+app.get('/api/HotelListing/:cost/:people', (req, res) => {
 
-  let query = 'SELECT Cost, Description, NumPeople, NumBeds, Name, NumRooms \
+  const MaxCost = req.params.cost
+  const MinPeople = req.params.people
+
+  let query = `SELECT HotelListing_ID, Cost, Description, NumPeople, NumBeds, Name, NumRooms \
                FROM HotelListing hl, BookableUnit bu, Property p \
-               WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID'
+               WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID AND hl.Cost <= ${MaxCost} AND bu.NumPeople >= ${MinPeople}`
   console.log(query)
 
   db.query(query, (err, results, fields) => {
@@ -82,9 +85,6 @@ app.get('/api/HotelListing', (req, res) => {
   })
 })
 
-
-
-// (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
 
 
 
