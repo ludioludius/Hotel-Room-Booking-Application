@@ -57,6 +57,30 @@ app.get('/api/HotelListing', (req, res) => {
 	})
 })
 
+app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res) => {
+
+	const minPrice = req.params.minPrice
+	const maxPrice = req.params.maxPrice
+	const minPeople = req.params.minPeople
+	const maxPeople = req.params.maxPeople
+	console.log(minPeople, minPrice, maxPrice, maxPeople)
+
+
+	let query = `SELECT Cost, Description, NumPeople, NumBeds, Name, NumRooms \
+               FROM HotelListing hl, BookableUnit bu, Property p \
+               WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID 
+			   AND hl.Cost >= ${minPrice} AND hl.Cost <= ${maxPrice} AND bu.NumPeople >= ${minPeople} AND bu.NumPeople <= ${maxPeople}`
+	console.log(query)
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err)
+		}
+		console.log(fields)
+		return res.json(results)
+	})
+})
+
 
 // (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature
 

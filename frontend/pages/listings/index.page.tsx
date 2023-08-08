@@ -18,6 +18,7 @@ type Listin1 = {
 function Page() {
 	const [listings, setListings] = useState<Listin1[]>([]);
 
+	const [peopleRange, setPeopleRange] = useState<[number, number]>([0, 20]);
 	const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
 	const [items, setItems] = useState<MenuProps['items']>([
 		{
@@ -28,16 +29,24 @@ function Page() {
 			label: <Slider range max={1000} defaultValue={priceRange} onChange={setPriceRange}/>,
 			key: 1,
 		},
+		{
+			label: "People:",
+			key: 2,
+		},
+		{
+			label: <Slider range max={20} defaultValue={peopleRange} onChange={setPeopleRange}/>,
+			key: 3,
+		},
 	]);
 
 	const [filter, setFilter] = useState("");
 
 	useEffect(() => {
-		axios.get("http://localhost:3001/api/HotelListing").then((res) => {
+		axios.get(`http://localhost:3001/api/HotelListing/${priceRange[0]}/${priceRange[1]}/${peopleRange[0]}/${peopleRange[1]}`).then((res) => {
 			console.log(res.data);
 			setListings(res.data);
 		});
-	}, []);
+	}, [peopleRange, priceRange]);
 
 	return <>
 		<Row>
