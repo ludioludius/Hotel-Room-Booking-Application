@@ -15,8 +15,8 @@ const items: MenuProps['items'] = [
 		icon: <UnorderedListOutlined />,
 	},
 	{
-		label: 'Button Three',
-		key: '/user',
+		label: 'Book Room',
+		key: '/book',
 		icon: <UserOutlined />,
 	},
 ];

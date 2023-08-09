@@ -40,6 +40,48 @@ app.get('/api/PrivateListing', (req, res) => {
 	});
 });
 
+app.get("/api/hotel-listing/:id", (req, res) => {
+	let id = req.params.id;
+	let query = `SELECT Cost, Description
+							 FROM HotelListing hl
+							 WHERE hl.HotelListing_ID = ${id}`;
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err);
+		}
+		return res.json(results);
+	});
+});
+
+app.get("/api/check-customer-id/:id", (req, res) => {
+	let id = req.params.id;
+	let query = `SELECT *
+							 FROM Customer c
+							 WHERE c.ID = ${id}`;
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err);
+		}
+		return { found: results.length > 0 };
+	});
+});
+
+app.get("/api/reservations/hotel/:id", (req, res) => {
+	let id = req.params.id;
+	let query = `SELECT StartDate, Duration
+							 FROM MakesReservation_1 r
+							 WHERE r.BookableUnitID = ${id}`;
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err);
+		}
+		return res.json(results);
+	});
+});
+
 
 app.get('/api/HotelListing', (req, res) => {
 
@@ -66,7 +108,7 @@ app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res
 	console.log(minPeople, minPrice, maxPrice, maxPeople)
 
 
-	let query = `SELECT Cost, Description, NumPeople, NumBeds, Name, NumRooms \
+	let query = `SELECT HotelListing_ID, Cost, Description, NumPeople, NumBeds, Name, NumRooms \
                FROM HotelListing hl, BookableUnit bu, Property p \
                WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID 
 			   AND hl.Cost >= ${minPrice} AND hl.Cost <= ${maxPrice} AND bu.NumPeople >= ${minPeople} AND bu.NumPeople <= ${maxPeople}`
@@ -80,6 +122,27 @@ app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res
 		return res.json(results)
 	})
 })
+
+app.post("/api/hotel/add-reservation", (req, res) => {
+	const { CustomerID, HotelListingID, StartDate, EndDate } = req.body;
+	const next_id_query = `SELECT MAX(ReservationID) AS max_id FROM MakesReservation_1`;
+	db.query(next_id_query, (err, results, fields) => {
+		if (err) {
+			console.error('Error getting next id:', err);
+			return res.status(500).json({error: 'Error getting next id'});
+		}
+		const next_id = results[0].max_id + 1;
+		const query = `INSERT INTO MakesReservation_1 (ReservationID, CustomerID, BookableUnitID, StartDate, Duration)
+						VALUES (${next_id}, ${CustomerID}, ${HotelListingID}, '${StartDate}', ${EndDate})`;
+		db.query(query, (err, results, fields) => {
+			if (err) {
+				console.error('Error adding reservation:', err);
+				return res.status(500).json({error: 'Error adding reservation'});
+			}
+			return res.json({success: true});
+		});
+	});
+});
 
 
 // (3) all details for a hotel/private listing but with selection parameters (cost, num people, type) for selction feature

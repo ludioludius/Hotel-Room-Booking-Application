@@ -6,7 +6,8 @@ import axios from "axios";
 
 export {Page}
 
-type Listin1 = {
+type Listing = {
+	HotelListing_ID: number,
 	Cost: number,
 	Description: string,
 	Name: String,
@@ -16,11 +17,11 @@ type Listin1 = {
 }
 
 function Page() {
-	const [listings, setListings] = useState<Listin1[]>([]);
+	const [listings, setListings] = useState<Listing[]>([]);
 
 	const [peopleRange, setPeopleRange] = useState<[number, number]>([0, 20]);
 	const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-	const [items, setItems] = useState<MenuProps['items']>([
+	const [items, _] = useState<MenuProps['items']>([
 		{
 			label: "Price:",
 			key: 0,
@@ -58,11 +59,19 @@ function Page() {
 					<h1>Listings</h1>
 					<Space>Search: <Input addonAfter={<SearchOutlined />} onChange={e => setFilter(e.target.value)} /></Space>
 					{listings.filter(listing => {
+						// filter with search bar
 						return listing.Name.toLowerCase().includes(filter.toLowerCase()) || listing.Description.toLowerCase().includes(filter.toLowerCase())
 					}).map((listing, index) => {
-						return <Row>
-							<Card style={{width: "400px"}} key={index} title={listing.Name}>
-								<p>{listing.Description}</p>
+						return <Row key={index}>
+							<Card style={{width: "400px"}}  title={listing.Name} actions={[<a href={"/listings/hotel/" + listing.HotelListing_ID}>book</a>]}>
+								<Card.Grid hoverable={false} style={{width: "60%"}}>{listing.Description}</Card.Grid>
+								<Card.Grid hoverable={false} style={{width: "40%"}}>
+									<Space direction="vertical">
+										<div>Beds: {listing.NumBeds}</div>
+										<div>Rooms: {listing.NumRooms}</div>
+										<div>${listing.Cost}/night</div>
+									</Space>
+								</Card.Grid>
 							</Card>
 						</Row>
 					})}
