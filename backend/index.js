@@ -64,7 +64,8 @@ app.get("/api/check-customer-id/:id", (req, res) => {
 		if (err) {
 			return res.send(err);
 		}
-		return { found: results.length > 0 };
+		console.log(results);
+		return res.json(results);
 	});
 });
 
@@ -124,22 +125,31 @@ app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res
 })
 
 app.post("/api/hotel/add-reservation", (req, res) => {
-	const { CustomerID, HotelListingID, StartDate, EndDate } = req.body;
-	const next_id_query = `SELECT MAX(ReservationID) AS max_id FROM MakesReservation_1`;
-	db.query(next_id_query, (err, results, fields) => {
+	const { CustomerID, HotelListingID, StartDate, EndDate, Duration } = req.body;
+
+	const query = `INSERT INTO MakesReservation_2 (StartDate, Duration, EndDate)
+    					VALUES ('${StartDate}', ${Duration}, '${EndDate}')`;
+	db.query(query, (err, results, fields) => {
 		if (err) {
-			console.error('Error getting next id:', err);
-			return res.status(500).json({error: 'Error getting next id'});
+			console.error('Error adding reservation:', err);
+			return res.status(500).json({error: 'Error adding reservation'});
 		}
-		const next_id = results[0].max_id + 1;
-		const query = `INSERT INTO MakesReservation_1 (ReservationID, CustomerID, BookableUnitID, StartDate, Duration)
-						VALUES (${next_id}, ${CustomerID}, ${HotelListingID}, '${StartDate}', ${EndDate})`;
-		db.query(query, (err, results, fields) => {
+		const next_id_query = `SELECT MAX(Reservation_ID) AS max_id FROM MakesReservation_1`;
+		db.query(next_id_query, (err, results, fields) => {
 			if (err) {
-				console.error('Error adding reservation:', err);
-				return res.status(500).json({error: 'Error adding reservation'});
+				console.error('Error getting next id:', err);
+				return res.status(500).json({error: 'Error getting next id'});
 			}
-			return res.json({success: true});
+			const next_id = results[0].max_id + 1;
+			const query = `INSERT INTO MakesReservation_1 (Reservation_ID, CustomerID, BookableUnitID, StartDate, Duration)
+							VALUES (${next_id}, ${CustomerID}, ${HotelListingID}, '${StartDate}', ${Duration})`;
+			db.query(query, (err, results, fields) => {
+				if (err) {
+					console.error('Error adding reservation:', err);
+					return res.status(500).json({error: 'Error adding reservation'});
+				}
+				return res.json({success: true});
+			});
 		});
 	});
 });

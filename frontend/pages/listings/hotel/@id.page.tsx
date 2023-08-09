@@ -43,7 +43,7 @@ function Page() {
 	function validate_id() {
 		axios.get(`http://localhost:3001/api/check-customer-id/${customerId}`).then((response) => {
 			console.log(response);
-			const id_valid = response.data.found;
+			const id_valid = response.data.length > 0;
 			setIdValid(id_valid);
 		}).catch((error) => {
 			console.error('Error checking ID:', error);
@@ -54,6 +54,9 @@ function Page() {
 		<Row gutter={[8, 8]}>
 			<Col offset={8} span={16}>
 				<h1>Book Room</h1>
+			</Col>
+			<Col offset={8} span={16}>
+				{listing.Description}
 			</Col>
 			<Col offset={8} span={16}>
 				Cost: ${listing.Cost}/night
@@ -78,17 +81,19 @@ function Page() {
 			<Col offset={8}>
 				<Form disabled={!idValid} onFinish={values => {
 					console.log(values);
-					axios.post(`http://localhost:3001/api/reservations/hotel/${id}`, {
-						StartDate: values.dates[0].toDate(),
-						Duration: values.dates[1].diff(values.dates[0], 'days'),
+					axios.post(`http://localhost:3001/api/hotel/add-reservation`, {
+						StartDate: values.dates[0]["$d"].toISOString().slice(0, 19).replace('T', ' '),
+						EndDate: values.dates[1]["$d"].toISOString().slice(0, 19).replace('T', ' '),
+						Duration: Math.round((values.dates[1]["$d"] - values.dates[0]["$d"]) / (1000 * 60 * 60 * 24)),
 						CustomerID: customerId,
+						HotelListingID: id,
 					}).then((res) => {
 						console.log(res);
 					}).catch((error) => {
 						console.error('Error making reservation:', error);
 					});
 				}}>
-					<Form.Item label="Rentable Unit ID">
+					<Form.Item label="Rentable Unit ID" name="dates">
 						<DatePicker.RangePicker onChange={() => {}}/>
 					</Form.Item>
 					<Form.Item>

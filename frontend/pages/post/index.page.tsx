@@ -64,28 +64,40 @@ function Page() {
 		<Row gutter={[8, 8]}>
 			<Col offset={8}>
 			{state === "private" ?
-				<Form disabled={!idValid}>
-					<Form.Item label="Rentable Unit ID">
+				<Form disabled={!idValid} onFinish={values => {
+					console.log(values);
+					axios.post(`http://localhost:3001/post-private-listing`, values)
+				}}>
+					<Form.Item label="Rentable Unit ID" name="RentUnitID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Cost ($/night)">
+					<Form.Item label="Cost ($/night)" name="Cost">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Description">
+					<Form.Item label="Description" name="Desc">
 						<TextArea />
 					</Form.Item>
-				</Form> : <Form disabled={!idValid}>
-					<Form.Item label="Rentable Unit ID">
+					<Form.Item>
+						<Button type="primary" htmlType="submit">Post</Button>
+					</Form.Item>
+				</Form> : <Form disabled={!idValid} onFinish={values => {
+					console.log(values);
+					axios.post(`http://localhost:3001/post-hotel-listing`, values)
+				}}>
+					<Form.Item label="Property ID" name="PropertyID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Room Number">
+					<Form.Item label="Room Number" name="RoomNum">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Cost ($/night)">
+					<Form.Item label="Cost ($/night)" name="Cost">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Description">
+					<Form.Item label="Description" name="Desc">
 						<TextArea />
+					</Form.Item>
+					<Form.Item>
+						<Button type="primary" htmlType="submit">Post</Button>
 					</Form.Item>
 				</Form>
 			}
