@@ -5,6 +5,11 @@ import {usePageContext} from "./usePageContext";
 
 const items: MenuProps['items'] = [
 	{
+		label: 'Delete Listing',
+		key: '/delete',
+		icon: <EditOutlined />,
+	},
+	{
 		label: 'Post Listing',
 		key: '/post',
 		icon: <EditOutlined />,
