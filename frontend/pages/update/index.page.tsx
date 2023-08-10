@@ -22,8 +22,6 @@ function Page() {
 
 	function changeId(a: number | null) {
 		setId(a ? a : 0);
-		setState("private");
-		setIdValid(false);
 	}
 
 	const [id, setId] = useState(0);
@@ -46,7 +44,7 @@ function Page() {
 	return <>
 		<Row gutter={[8, 8]}>
 			<Col offset={8} span={16}>
-				<h1>Create Listing</h1>
+				<h1>Update Listing</h1>
 			</Col>
 			<Col offset={8} span={16}>
 				<Space>
@@ -68,38 +66,40 @@ function Page() {
 			{state === "private" ?
 				<Form disabled={!idValid} onFinish={values => {
 					console.log(values);
-					axios.post(`http://localhost:3001/post-private-listing`, values)
+                    values.PrivateListerID = id;
+					axios.post(`http://localhost:3001/update-private-listing`, values)
 				}}>
-					<Form.Item label="Rentable Unit ID" name="RentUnitID">
+                    <h3>Enter the ID of the private listing you wish to update:</h3>
+                    <Form.Item label="Rentable Unit ID" name="RentUnitID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Cost ($/night)" name="Cost">
+					<Form.Item label="Private Listing ID" name="PrivateListID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Description" name="Desc">
-						<TextArea />
+                    <Form.Item label="Updated Cost" name="Cost">
+						<Input />
 					</Form.Item>
-					<Form.Item>
-						<Button type="primary" htmlType="submit">Post</Button>
+                    <Form.Item>
+						<Button type="primary" htmlType="submit">Update</Button>
 					</Form.Item>
+
 				</Form> : <Form disabled={!idValid} onFinish={values => {
 					console.log(values);
-					axios.post(`http://localhost:3001/post-hotel-listing`, values)
+                    values.HotelID = id;
+					axios.post(`http://localhost:3001/update-hotel-listing`, values)
 				}}>
+                    <h3>Enter the ID of the hotel listing you wish to update:</h3>
 					<Form.Item label="Property ID" name="PropertyID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Room Number" name="RoomNum">
+                    <Form.Item label="Hotel Listing ID" name="HotelListID">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Cost ($/night)" name="Cost">
+                    <Form.Item label="Updated Cost" name="Cost">
 						<Input />
 					</Form.Item>
-					<Form.Item label="Description" name="Desc">
-						<TextArea />
-					</Form.Item>
-					<Form.Item>
-						<Button type="primary" htmlType="submit">Post</Button>
+                    <Form.Item>
+						<Button type="primary" htmlType="submit">Update</Button>
 					</Form.Item>
 				</Form>
 			}

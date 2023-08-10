@@ -346,6 +346,163 @@ app.post('/post-hotel-listing', (req, res) => {
 	}
 )
 
+
+app.post('/delete-hotel-listing', (req, res) => {
+	const HotelID = req.body.HotelID;
+	const PropertyID = req.body.PropertyID;
+	const HotelListID = req.body.HotelListID;
+	const checkHotelListingQuery = `SELECT HotelListing_ID, Property_ID, H.ID
+								FROM HotelListing, HotelOrganization H
+								WHERE HotelListing_ID = ${HotelListID} 
+								AND Property_ID = ${PropertyID} 
+								AND H.ID = ${HotelID}`;
+	db.query(checkHotelListingQuery, (err, result) => {
+			if (err) {
+				console.error('Error checking HotelListing:', err);
+				return res.status(500).json({error: `Error checking HotelListing`});
+			}
+
+			if (result.length === 0) {
+				return res.status(404).json({error: `The Listing with ID ${HotelListID} does not exist,
+													or belong to Property ${PropertyID}`});
+			}
+
+			const deleteHotelListing = `DELETE FROM HotelListing
+										WHERE HotelListing_ID = ${HotelListID} AND Property_ID = ${PropertyID}`;
+			db.query(deleteHotelListing, (err, result) => {
+				if (err) {
+					console.error('Error deleting row:', err);
+					return res.status(500).json({error: 'Failed to delete row'});
+				}
+				return res.status(200).json({message: 'Row deleted successfully!'});
+			});
+	});
+})
+
+app.post('/delete-private-listing', (req, res) => {
+	const PrivateListerID = req.body.PrivateListerID;
+	const RentUnitID = req.body.RentUnitID;
+	const PrivateListID = req.body.PrivateListID;
+
+	const checkPrivateListingQuery = `SELECT PrivateListing_ID, P.RentableUnit_ID, R.PrivateOrganization_ID
+								FROM PrivateListing P, RentableUnit R
+								WHERE PrivateListing_ID = ${PrivateListID} 
+								AND P.RentableUnit_ID = ${RentUnitID} 
+								AND R.PrivateOrganization_ID = ${PrivateListerID}`;
+	db.query(checkPrivateListingQuery, (err, result) => {
+			if (err) {
+				console.error('Error checking PrivateListing:', err);
+				return res.status(500).json({error: `Error checking PrivateListing`});
+			}
+
+			if (result.length === 0) {
+				return res.status(404).json({error: `The Listing with ID ${PrivateListID} does not exist,
+													or belong to RentableUnit ${RentUnitID}`});
+			}
+
+			const deletePrivateListing = `DELETE FROM PrivateListing
+										WHERE PrivateListing_ID = ${PrivateListID} 
+										AND RentableUnit_ID = ${RentUnitID}`;
+			db.query(deletePrivateListing, (err, result) => {
+				if (err) {
+					console.error('Error deleting row:', err);
+					return res.status(500).json({error: 'Failed to delete row'});
+				}
+				return res.status(200).json({message: 'Row deleted successfully!'});
+			});
+	});
+})
+
+
+app.post('/update-hotel-listing', (req, res) => {
+	const HotelID = req.body.HotelID;
+	const PropertyID = req.body.PropertyID;
+	const HotelListID = req.body.HotelListID;
+	const Cost = req.body.Cost;
+	const checkHotelListingQuery = `SELECT HotelListing_ID, Property_ID, H.ID
+								FROM HotelListing, HotelOrganization H
+								WHERE HotelListing_ID = ${HotelListID} 
+								AND Property_ID = ${PropertyID} 
+								AND H.ID = ${HotelID}`;
+	db.query(checkHotelListingQuery, (err, result) => {
+			if (err) {
+				console.error('Error checking HotelListing:', err);
+				return res.status(500).json({error: `Error checking HotelListing`});
+			}
+
+			if (result.length === 0) {
+				return res.status(404).json({error: `The Listing with ID ${HotelListID} does not exist,
+													or belong to Property ${PropertyID}`});
+			}
+
+			const updateHotelListing = `UPDATE HotelListing
+										SET Cost = ${Cost}
+										WHERE HotelListing_ID = ${HotelListID}`;
+			db.query(updateHotelListing, (err, result) => {
+				if (err) {
+					console.error('Error updating row:', err);
+					return res.status(500).json({error: 'Failed to updating row'});
+				}
+				return res.status(200).json({message: 'Row updated successfully!'});
+			});
+	});
+})
+
+
+app.post('/update-private-listing', (req, res) => {
+	const PrivateListerID = req.body.PrivateListerID;
+	const RentUnitID = req.body.RentUnitID;
+	const PrivateListID = req.body.PrivateListID;
+	const Cost = req.body.Cost;
+
+	const checkPrivateListingQuery = `SELECT PrivateListing_ID, P.RentableUnit_ID, R.PrivateOrganization_ID
+								FROM PrivateListing P, RentableUnit R
+								WHERE PrivateListing_ID = ${PrivateListID} 
+								AND P.RentableUnit_ID = ${RentUnitID} 
+								AND R.PrivateOrganization_ID = ${PrivateListerID}`;
+	db.query(checkPrivateListingQuery, (err, result) => {
+			if (err) {
+				console.error('Error checking PrivateListing:', err);
+				return res.status(500).json({error: `Error checking PrivateListing`});
+			}
+
+			if (result.length === 0) {
+				return res.status(404).json({error: `The Listing with ID ${PrivateListID} does not exist,
+													or belong to RentableUnit ${RentUnitID}`});
+			}
+
+			const updatePrivateListing = `UPDATE PrivateListing
+											SET Cost = ${Cost}
+											WHERE PrivateListing_ID = ${PrivateListID}`;
+			db.query(updatePrivateListing, (err, result) => {
+				if (err) {
+					console.error('Error updating row:', err);
+					return res.status(500).json({error: 'Failed to update row'});
+				}
+				return res.status(200).json({message: 'Row updated successfully!'});
+			});
+	});
+})
+
+app.get('/nested-group-by', (req, res) => {
+	const nestedGroupByQuery = `SELECT CustomerID, num_reservations
+								FROM (
+									SELECT CustomerID, COUNT(*) AS num_reservations
+									FROM makesreservation_1
+									GROUP BY CustomerID
+								) AS subquery
+								ORDER BY num_reservations DESC
+								LIMIT 3`;
+	db.query(nestedGroupByQuery, (err, result) => {
+		if (err) {
+			console.error('Error:', err);
+			return res.status(500).json({error: 'Query failed'});
+		}
+		return res.status(200).json(result);
+	});
+
+});
+
 app.listen(PORT, () => {
 	console.log(`Server listening on ${PORT}`);
 });
