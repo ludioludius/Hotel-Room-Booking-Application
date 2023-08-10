@@ -8,5 +8,5 @@ function Page() {
 	const url = context.urlPathname;
 	const id = url.split("/")[3];
 
-	return <Listing type="hotel" id={id}/>;
+	return <Listing type="private" id={id}/>;
 }

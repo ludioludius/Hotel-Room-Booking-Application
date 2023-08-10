@@ -1,4 +1,4 @@
-import { UserOutlined, UnorderedListOutlined, EditOutlined } from "@ant-design/icons";
+import { AppstoreAddOutlined, UnorderedListOutlined, EditOutlined, DeleteOutlined, LineChartOutlined } from "@ant-design/icons";
 import type { MenuProps } from 'antd';
 import {Menu} from 'antd';
 import {usePageContext} from "./usePageContext";
@@ -7,6 +7,7 @@ const items: MenuProps['items'] = [
 	{
 		label: 'Customer Stats',
 		key: '/customerstat',
+		icon: <LineChartOutlined />,
 	},
 	{
 		label: 'Update Listing',
@@ -16,22 +17,17 @@ const items: MenuProps['items'] = [
 	{
 		label: 'Delete Listing',
 		key: '/delete',
-		icon: <EditOutlined />,
+		icon: <DeleteOutlined />,
 	},
 	{
 		label: 'Post Listing',
 		key: '/post',
-		icon: <EditOutlined />,
+		icon: <AppstoreAddOutlined />,
 	},
 	{
 		label: 'View Listings',
 		key: '/listings',
 		icon: <UnorderedListOutlined />,
-	},
-	{
-		label: 'Book Room',
-		key: '/book',
-		icon: <UserOutlined />,
 	},
 ];
 
