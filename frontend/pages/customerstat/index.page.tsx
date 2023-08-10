@@ -25,7 +25,7 @@ function Page() {
         <Button type="primary" onClick={fetchStatsData}>Display Stats</Button>
         {statsData && (
             <div>
-            <h1>Number of Reservations per Customer</h1>
+            <h1>Top 3 customers with the most reservations</h1>
             <table>
                 <thead>
                 <tr>

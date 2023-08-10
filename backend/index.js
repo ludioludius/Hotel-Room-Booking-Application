@@ -432,9 +432,14 @@ app.post('/update-private-listing', (req, res) => {
 })
 
 app.get('/nested-group-by', (req, res) => {
-	const nestedGroupByQuery = `SELECT CustomerID, COUNT(*) AS num_reservations
-								FROM makesreservation_1
-								GROUP BY CustomerID`;
+	const nestedGroupByQuery = `SELECT Name CustomerID, num_reservations
+								FROM (
+									SELECT CustomerID, COUNT(*) AS num_reservations
+									FROM makesreservation_1
+									GROUP BY CustomerID
+								) AS subquery
+								ORDER BY num_reservations DESC
+								LIMIT 3`;
 	db.query(nestedGroupByQuery, (err, result) => {
 		if (err) {
 			console.error('Error:', err);
