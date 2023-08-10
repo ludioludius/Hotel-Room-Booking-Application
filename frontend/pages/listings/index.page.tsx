@@ -14,7 +14,7 @@ type HotelListing = {
 	NumBeds: number,
 	NumPeople: number,
 	NumRooms: number,
-}
+};
 
 type PrivateListing = {
 	PrivateListing_ID: number,
@@ -24,18 +24,35 @@ type PrivateListing = {
 	NumBeds: number,
 	NumPeople: number,
 	NumRooms: number,
-}
+};
 
 type avgs = {
 	Name: string,
 	Cost: number
-}
+};
 
 const options = [
 	{ label: "Rooms", value: "rooms" },
 	{ label: "Beds", value: "beds" },
 	{ label: "Occupants", value: "people" },
-]
+];
+
+function ListingCard(props: {type: "user" | "hotel", listing: HotelListing | PrivateListing, id: number}) {
+	const {type, listing, id} = props;
+	return <Row>
+		<Card style={{width: "400px"}}  title={listing.Name} actions={[<a href={`/listings/${type}/` + id}>book</a>]}>
+			<Card.Grid hoverable={false} style={{width: "60%"}}>{listing.Description}</Card.Grid>
+			<Card.Grid hoverable={false} style={{width: "40%"}}>
+				<Space direction="vertical">
+					<div>Beds: {listing.NumBeds}</div>
+					<div>Rooms: {listing.NumRooms}</div>
+					<div>Occupants: {listing.NumPeople}</div>
+					<div>${listing.Cost}/night</div>
+				</Space>
+			</Card.Grid>
+		</Card>
+	</Row>
+}
 
 function Page() {
 	const [hotelListings, setHotelListings] = useState<HotelListing[]>([]);
@@ -107,38 +124,14 @@ function Page() {
 					{hotelListings.filter(listing => {
 						// filter with search bar
 						return listing.Name.toLowerCase().includes(filter.toLowerCase()) || listing.Description.toLowerCase().includes(filter.toLowerCase())
-					}).map((listing, index) => {
-						return <Row key={index}>
-							<Card style={{width: "400px"}}  title={listing.Name} actions={[<a href={"/listings/hotel/" + listing.HotelListing_ID}>book</a>]}>
-								<Card.Grid hoverable={false} style={{width: "60%"}}>{listing.Description}</Card.Grid>
-								<Card.Grid hoverable={false} style={{width: "40%"}}>
-									<Space direction="vertical">
-										<div>Beds: {listing.NumBeds}</div>
-										<div>Rooms: {listing.NumRooms}</div>
-										<div>Occupants: {listing.NumPeople}</div>
-										<div>${listing.Cost}/night</div>
-									</Space>
-								</Card.Grid>
-							</Card>
-						</Row>
+					}).map((listing) => {
+						return <ListingCard type="hotel" listing={listing} id={listing.HotelListing_ID}/>
 					})}
 					{privateListings.filter(listing => {
 						// filter with search bar
 						return listing.Name.toLowerCase().includes(filter.toLowerCase()) || listing.Description.toLowerCase().includes(filter.toLowerCase())
-					}).map((listing, index) => {
-						return <Row key={index}>
-							<Card style={{width: "400px"}}  title={listing.Name} actions={[<a href={"/listings/user/" + listing.PrivateListing_ID}>book</a>]}>
-								<Card.Grid hoverable={false} style={{width: "60%"}}>{listing.Description}</Card.Grid>
-								<Card.Grid hoverable={false} style={{width: "40%"}}>
-									<Space direction="vertical">
-										<div>Beds: {listing.NumBeds}</div>
-										<div>Rooms: {listing.NumRooms}</div>
-										<div>Occupants: {listing.NumPeople}</div>
-										<div>${listing.Cost}/night</div>
-									</Space>
-								</Card.Grid>
-							</Card>
-						</Row>
+					}).map((listing) => {
+						return <ListingCard type="user" listing={listing} id={listing.PrivateListing_ID}/>
 					})}
 				</Space>
 			</Col>
