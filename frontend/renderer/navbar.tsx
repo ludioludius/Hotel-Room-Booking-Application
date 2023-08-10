@@ -5,6 +5,10 @@ import {usePageContext} from "./usePageContext";
 
 const items: MenuProps['items'] = [
 	{
+		label: 'Customer Stats',
+		key: '/customerstat',
+	},
+	{
 		label: 'Update Listing',
 		key: '/update',
 		icon: <EditOutlined />,

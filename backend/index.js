@@ -431,6 +431,20 @@ app.post('/update-private-listing', (req, res) => {
 	});
 })
 
+app.get('/nested-group-by', (req, res) => {
+	const nestedGroupByQuery = `SELECT CustomerID, COUNT(*) AS num_reservations
+								FROM makesreservation_1
+								GROUP BY CustomerID`;
+	db.query(nestedGroupByQuery, (err, result) => {
+		if (err) {
+			console.error('Error:', err);
+			return res.status(500).json({error: 'Query failed'});
+		}
+		return res.status(200).json(result);
+	});
+
+});
+
 app.listen(PORT, () => {
 	console.log(`Server listening on ${PORT}`);
 });
