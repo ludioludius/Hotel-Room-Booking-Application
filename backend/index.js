@@ -124,6 +124,59 @@ app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res
 	})
 })
 
+app.get('/api/PrivateListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res) => {
+
+	const minPrice = req.params.minPrice
+	const maxPrice = req.params.maxPrice
+	const minPeople = req.params.minPeople
+	const maxPeople = req.params.maxPeople
+	console.log(minPeople, minPrice, maxPrice, maxPeople)
+
+
+	let query = `SELECT PrivateListing_ID ,Cost, Description, NumPeople, NumBeds, Name \
+				FROM PrivateListing pl, RentableUnit ru, PrivateLister l \
+				WHERE pl.RentableUnit_ID = ru.RentableUnit_ID AND ru.PrivateOrganization_ID = l.ID \
+				AND pl.Cost >= ${minPrice} AND pl.Cost <= ${maxPrice} AND ru.NumPeople >= ${minPeople} AND ru.NumPeople <= ${maxPeople} `
+	console.log(query)
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err)
+		}
+		console.log(fields)
+		return res.json(results)
+	})
+})
+
+app.get('/api/getAvgs/:minPeople/:maxPeople', (req, res) => {
+
+	const minPeople = req.params.minPeople
+	const maxPeople = req.params.maxPeople
+	console.log(minPeople, maxPeople)
+
+	let query = `SELECT p.Name, hl.Cost\
+	FROM HotelListing hl, BookableUnit bu, Property p \
+	WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID \
+	GROUP BY hl.Property_ID, hl.Cost, bu.NumPeople, p.Name
+	HAVING bu.NumPeople >= ${minPeople} AND bu.NumPeople <= ${maxPeople}\
+	`
+
+	//Not sure if query is correct ^
+
+	console.log(query)
+
+	db.query(query, (err, results, fields) => {
+		if (err) {
+			return res.send(err)
+		}
+		console.log(fields)
+		return res.json(results)
+	})
+
+})
+
+
+
 app.post("/api/hotel/add-reservation", (req, res) => {
 	const { CustomerID, HotelListingID, StartDate, EndDate, Duration } = req.body;
 
