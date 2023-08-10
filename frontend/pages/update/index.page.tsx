@@ -2,8 +2,6 @@ import {Button, Col, Divider, Form, Input, InputNumber, Radio, RadioChangeEvent,
 import {useState} from "react";
 import axios from "axios";
 
-const {TextArea} = Input;
-
 export {Page}
 
 function Page() {

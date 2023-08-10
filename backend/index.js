@@ -100,16 +100,15 @@ app.get('/api/HotelListing', (req, res) => {
 	})
 })
 
-app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, res) => {
-
+app.get('/api/HotelListing/:minPrice/:maxPrice/:minPeople/:maxPeople/:filters', (req, res) => {
+	const filters = req.params.filters;
 	const minPrice = req.params.minPrice
 	const maxPrice = req.params.maxPrice
 	const minPeople = req.params.minPeople
 	const maxPeople = req.params.maxPeople
-	console.log(minPeople, minPrice, maxPrice, maxPeople)
+	console.log(filters);
 
-
-	let query = `SELECT HotelListing_ID, Cost, Description, NumPeople, NumBeds, Name, NumRooms \
+	let query = `SELECT HotelListing_ID, Cost, Description, Name, NumRooms, NumPeople, NumBeds \
                FROM HotelListing hl, BookableUnit bu, Property p \
                WHERE hl.Property_ID = bu.Property_ID AND hl.RoomNumber = bu.RoomNum AND bu.Property_ID = p.Property_ID 
 			   AND hl.Cost >= ${minPrice} AND hl.Cost <= ${maxPrice} AND bu.NumPeople >= ${minPeople} AND bu.NumPeople <= ${maxPeople}`
@@ -131,7 +130,6 @@ app.get('/api/PrivateListing/:minPrice/:maxPrice/:minPeople/:maxPeople', (req, r
 	const minPeople = req.params.minPeople
 	const maxPeople = req.params.maxPeople
 	console.log(minPeople, minPrice, maxPrice, maxPeople)
-
 
 	let query = `SELECT PrivateListing_ID ,Cost, Description, NumPeople, NumBeds, Name \
 				FROM PrivateListing pl, RentableUnit ru, PrivateLister l \
@@ -172,17 +170,14 @@ app.get('/api/getAvgs/:minPeople/:maxPeople', (req, res) => {
 		console.log(fields)
 		return res.json(results)
 	})
-
-})
-
-
+});
 
 app.post("/api/hotel/add-reservation", (req, res) => {
 	const { CustomerID, HotelListingID, StartDate, EndDate, Duration } = req.body;
 
 	const query = `INSERT INTO MakesReservation_2 (StartDate, Duration, EndDate)
     					VALUES ('${StartDate}', ${Duration}, '${EndDate}')`;
-	db.query(query, (err, results, fields) => {
+	db.query(query, (err) => {
 		if (err) {
 			console.error('Error adding reservation:', err);
 			return res.status(500).json({error: 'Error adding reservation'});

@@ -2,8 +2,6 @@ import {Button, Col, Divider, Form, Input, InputNumber, Radio, RadioChangeEvent,
 import {useState} from "react";
 import axios from "axios";
 
-const {TextArea} = Input;
-
 export {Page}
 
 function Page() {
@@ -18,10 +16,6 @@ function Page() {
 		setId(0);
 		setIdValid(false);
 		setState(value);
-	}
-
-	function changeId(a: number | null) {
-		setId(a ? a : 0);
 	}
 
 	const [id, setId] = useState(0);
@@ -53,7 +47,7 @@ function Page() {
 			</Col>
 			<Col offset={8} span={16}>
 				<Space>
-					<InputNumber addonBefore={"ID:"} controls={false} onChange={changeId} value={id}/>
+					<InputNumber addonBefore={"ID:"} controls={false} onChange={id => setId(id || 0)} defaultValue={id}/>
 					<Button type="primary" onClick={validate_id}>Validate ID</Button>
 				</Space>
 			</Col>
